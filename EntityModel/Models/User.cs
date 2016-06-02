@@ -1,10 +1,11 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
+using EntityModel.Contracts;
 using Microsoft.AspNet.Identity.EntityFramework;
 
-namespace DataAcces.Models
+namespace EntityModel.Models
 {
-    public class User:IdentityUser
+    public class User:IdentityUser, IDisposable
     {
         [Required]
         [MaxLength(100)]
@@ -14,5 +15,10 @@ namespace DataAcces.Models
         public string LastName { get; set; }
         [Required]
         public DateTime JoinDate { get; set; }
+
+        public void Dispose()
+        {
+            throw new NotImplementedException();
+        }
     }
 }
