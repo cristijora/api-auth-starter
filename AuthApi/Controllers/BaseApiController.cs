@@ -1,4 +1,5 @@
 ﻿using System.Net.Http;
+using System.Web;
 using System.Web.Http;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
@@ -15,7 +16,7 @@ namespace AuthApi.Controllers
         {
             get
             {
-                return _AppUserManager ?? Request.GetOwinContext().GetUserManager<ApplicationUserManager>();
+                return _AppUserManager ?? HttpContext.Current.GetOwinContext().GetUserManager<ApplicationUserManager>();
             }
         }
 

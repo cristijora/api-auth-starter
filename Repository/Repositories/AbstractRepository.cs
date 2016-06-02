@@ -270,7 +270,7 @@ namespace Repository.Repositories
             {
                 if (UnitOfWork.Entry(child).State == EntityState.Detached)
                     UnitOfWork.Set<T2>().Attach(child);
-                UnitOfWork.Set<T2>().Remove(child);
+                    UnitOfWork.Set<T2>().Remove(child);
             }
         }
     }

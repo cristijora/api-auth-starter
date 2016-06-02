@@ -42,7 +42,7 @@ namespace Repository.Utils
                 RequireUppercase = false,
             };
 
-           /* appUserManager.EmailService = new EmailService();
+            appUserManager.EmailService = new EmailService();
 
             var dataProtectionProvider = options.DataProtectionProvider;
             if (dataProtectionProvider != null)
@@ -52,7 +52,7 @@ namespace Repository.Utils
                     //Code for email confirmation and reset password life time
                     TokenLifespan = TimeSpan.FromHours(6)
                 };
-            }*/
+            }
 
             return appUserManager;
         }

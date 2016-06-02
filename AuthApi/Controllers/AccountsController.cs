@@ -20,8 +20,9 @@ namespace AuthApi.Controllers
 
         public AccountsController()
         {
-            userService=new UserService(this.AppUserManager);
+            userService=new UserService(AppUserManager);
         }
+        [Authorize]
         [Route("users")]
         public IHttpActionResult GetUsers()
         {
@@ -41,7 +42,7 @@ namespace AuthApi.Controllers
             return NotFound();
 
         }
-
+        [Authorize]
         [Route("user/{username}")]
         public async Task<IHttpActionResult> GetUserByName(string username)
         {
@@ -55,6 +56,7 @@ namespace AuthApi.Controllers
             return NotFound();
 
         }
+        [AllowAnonymous]
         [Route("create")]
         public async Task<IHttpActionResult> CreateUser(CreateUserBindingModel createUserModel)
         {
@@ -78,14 +80,76 @@ namespace AuthApi.Controllers
             {
                 return GetErrorResult(addUserResult);
             }
-
-            var callbackUrl = new Uri(System.Security.Policy.Url.Link("ConfirmEmailRoute", new { userId = user.Id, code = code }));
+            string code = await userService.GenerateEmailConfirmationTokenAsync(user.Id);
+            var callbackUrl = new Uri(Url.Link("ConfirmEmailRoute", new { userId = user.Id, code }));
 
             await userService.SendRegistrationEmailAsync(user.Id, callbackUrl);
 
-            Uri locationHeader = new Uri(System.Security.Policy.Url.Link("GetUserById", new { id = user.Id }));
+            Uri locationHeader = new Uri(Url.Link("GetUserById", new { id = user.Id }));
 
             return Created(locationHeader, TheModelFactory.Create(user));
+
+        }
+        [AllowAnonymous]
+        [HttpGet]
+        [Route("ConfirmEmail", Name = "ConfirmEmailRoute")]
+        public async Task<IHttpActionResult> ConfirmEmail(string userId = "", string code = "")
+        {
+            if (string.IsNullOrWhiteSpace(userId) || string.IsNullOrWhiteSpace(code))
+            {
+                ModelState.AddModelError("", "User Id and Code are required");
+                return BadRequest(ModelState);
+            }
+
+            IdentityResult result = await userService.ConfirmEmailAsync(userId, code);
+
+            if (result.Succeeded)
+            {
+                return Ok();
+            }
+            return GetErrorResult(result);
+        }
+        [Authorize]
+        [Route("ChangePassword")]
+        public async Task<IHttpActionResult> ChangePassword(ChangePasswordBindingModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            IdentityResult result = await this.AppUserManager.ChangePasswordAsync(User.Identity.GetUserId(), model.OldPassword, model.NewPassword);
+
+            if (!result.Succeeded)
+            {
+                return GetErrorResult(result);
+            }
+
+            return Ok();
+        }
+        [Authorize]
+        [Route("user/{id:guid}")]
+        public async Task<IHttpActionResult> DeleteUser(string id)
+        {
+
+            //Only SuperAdmin or Admin can delete users (Later when implement roles)
+
+            var appUser = await userService.GetById(id);
+
+            if (appUser != null)
+            {
+                IdentityResult result = await userService.DeleteAsync(appUser);
+
+                if (!result.Succeeded)
+                {
+                    return GetErrorResult(result);
+                }
+
+                return Ok();
+
+            }
+
+            return NotFound();
 
         }
     }

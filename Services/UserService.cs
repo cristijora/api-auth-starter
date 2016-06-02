@@ -44,6 +44,11 @@ namespace Services
             return user;
         }
 
+        public async Task<IdentityResult> DeleteAsync(User user)
+        {
+            return await _applicationUserManager.DeleteAsync(user);
+        }
+
         public async Task<IdentityResult> CreateUser(User user,string password)
         {
             IdentityResult addUserResult = await _applicationUserManager.CreateAsync(user, password);
@@ -51,15 +56,23 @@ namespace Services
             {
                 throw new UserNotCreatedException();
             }
-            string code = await _applicationUserManager.GenerateEmailConfirmationTokenAsync(user.Id);
-
             return addUserResult;
         }
 
-        public async Task SendRegistrationEmailAsync(string userId,string callbackUrl)
+        public async Task SendRegistrationEmailAsync(string userId,Uri callbackUrl)
         {
             //TODO save email template somehwere
            await  _applicationUserManager.SendEmailAsync(userId, "Confirm your account", "Please confirm your account by clicking <a href=\"" + callbackUrl + "\">here</a>");
+        }
+
+        public async Task<string> GenerateEmailConfirmationTokenAsync(string userId)
+        {
+            return await _applicationUserManager.GenerateEmailConfirmationTokenAsync(userId);
+        }
+
+        public async Task<IdentityResult> ConfirmEmailAsync(string userId, string code)
+        {
+            return await _applicationUserManager.ConfirmEmailAsync(userId, code);
         }
     }
 }

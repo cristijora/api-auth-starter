@@ -13,8 +13,11 @@ namespace Services.Contracts
         IEnumerable<User> GetAll();
         Task<User> GetById(string Id);
         Task<User> GetUserByName(string username);
+        Task<IdentityResult> DeleteAsync(User user);
         Task<IdentityResult> CreateUser(User user,string password);
-        Task SendRegistrationEmailAsync(string userId, string callbackurl);
+        Task SendRegistrationEmailAsync(string userId, Uri callbackurl);
+        Task<string> GenerateEmailConfirmationTokenAsync(string userId);
+        Task<IdentityResult> ConfirmEmailAsync(string userId,string code);
 
     }
 }

@@ -5,6 +5,7 @@ using DataAcces.Utils;
 using Microsoft.AspNet.Identity.EntityFramework;
 using DataAcces.Context;
 using DataAcces.Contracts;
+using EntityModel.Contracts;
 using EntityModel.Models;
 
 namespace DataAcces.Context
@@ -14,6 +15,10 @@ namespace DataAcces.Context
         private readonly Guid _contextId;
         private readonly DataBaseModelDefinitions _databaseModelDefinitions;
 
+        public DbSet<TEntity> Set<TEntity>() where TEntity:class
+        {
+            return base.Set<TEntity>();
+        }
         public Database ContextDatabase
         {
             get

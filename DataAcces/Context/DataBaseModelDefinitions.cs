@@ -4,6 +4,7 @@ using System.Data.Entity;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using EntityModel.Models;
 
 namespace DataAcces.Context
 {
@@ -18,7 +19,7 @@ namespace DataAcces.Context
         private void DefineTableNames(DbModelBuilder modelBuilder)
         {
             //TODO custom table names here
-            //modelBuilder.Entity<User>().ToTable("Users");
+             modelBuilder.Entity<User>().ToTable("Users");
         }
     }
 }
