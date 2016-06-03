@@ -42,8 +42,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ChangePasswordBindingModel.cs" />
+    <Compile Include="CreateRoleBindingModel.cs" />
     <Compile Include="CreateUserBindingModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="UsersInRoleModel.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

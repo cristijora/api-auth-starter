@@ -106,9 +106,7 @@
       <DependentUpon>201605312142199_InitialUserCreate.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Models\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <ProjectReference Include="..\EntityModel\EntityModel.csproj">
       <Project>{9D7D1C87-7131-48FF-BCD4-46D9B57E8CAD}</Project>
