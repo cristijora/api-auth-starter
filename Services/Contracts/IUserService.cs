@@ -18,6 +18,9 @@ namespace Services.Contracts
         Task SendRegistrationEmailAsync(string userId, Uri callbackurl);
         Task<string> GenerateEmailConfirmationTokenAsync(string userId);
         Task<IdentityResult> ConfirmEmailAsync(string userId,string code);
+        bool IsInRole(string userId,string roleName);
+        Task<IdentityResult> AddToRoleAsync(string userId,string roleName);
+        Task<IdentityResult> RemoveFromRoleAsync(string userId, string roleName);
 
     }
 }

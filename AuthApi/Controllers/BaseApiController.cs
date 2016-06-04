@@ -25,7 +25,7 @@ namespace AuthApi.Controllers
         {
             get
             {
-                return _AppRoleManager ?? Request.GetOwinContext().GetUserManager<ApplicationRoleManager>();
+                return _AppRoleManager ?? HttpContext.Current.GetOwinContext().GetUserManager<ApplicationRoleManager>();
             }
         }
 
@@ -43,6 +43,7 @@ namespace AuthApi.Controllers
                 }
                 return _modelFactory;
             }
+
         }
 
         protected IHttpActionResult GetErrorResult(IdentityResult result)

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Net.Http;
 using System.Web.Http.Routing;
 using EntityModel.Models;
+using Microsoft.AspNet.Identity.EntityFramework;
 using Repository.Utils;
 
 namespace AuthApi.Controllers
@@ -33,6 +34,22 @@ namespace AuthApi.Controllers
                 Claims = _AppUserManager.GetClaimsAsync(appUser.Id).Result
             };
         }
+        public RoleReturnModel Create(Role appRole)
+        {
+
+            return new RoleReturnModel
+            {
+                Url = _UrlHelper.Link("GetRoleById", new { id = appRole.Id }),
+                Id = appRole.Id,
+                Name = appRole.Name
+            };
+        }
+    }
+    public class RoleReturnModel
+    {
+        public string Url { get; set; }
+        public string Id { get; set; }
+        public string Name { get; set; }
     }
     public class UserReturnModel
     {

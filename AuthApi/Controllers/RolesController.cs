@@ -6,8 +6,11 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web.Http;
 using DtoModels;
+using EntityModel.Models;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.EntityFramework;
+using Services;
+using Services.Contracts;
 
 namespace AuthApi.Controllers
 {
@@ -15,10 +18,17 @@ namespace AuthApi.Controllers
     [RoutePrefix("api/roles")]
     public class RolesController : BaseApiController
     {
+        private readonly IUserService _userService;
+        private readonly IRoleService _roleService;
+        public RolesController()
+        {
+            _userService = new UserService(AppUserManager);
+            _roleService = new RoleService(AppRoleManager);
+        }
         [Route("{id:guid}", Name = "GetRoleById")]
         public async Task<IHttpActionResult> GetRole(string Id)
         {
-            var role = await this.AppRoleManager.FindByIdAsync(Id);
+            var role = await _roleService.FindByIdAsync(Id);
 
             if (role != null)
             {
@@ -32,7 +42,7 @@ namespace AuthApi.Controllers
         [Route("", Name = "GetAllRoles")]
         public IHttpActionResult GetAllRoles()
         {
-            var roles = this.AppRoleManager.Roles;
+            var roles = _roleService.GetAll();
 
             return Ok(roles);
         }
@@ -45,9 +55,9 @@ namespace AuthApi.Controllers
                 return BadRequest(ModelState);
             }
 
-            var role = new IdentityRole { Name = model.Name };
+            var role = new Role { Name = model.Name };
 
-            var result = await this.AppRoleManager.CreateAsync(role);
+            var result = await _roleService.CreateAsync(role);
 
             if (!result.Succeeded)
             {
@@ -64,11 +74,11 @@ namespace AuthApi.Controllers
         public async Task<IHttpActionResult> DeleteRole(string Id)
         {
 
-            var role = await this.AppRoleManager.FindByIdAsync(Id);
+            var role = await _roleService.FindByIdAsync(Id);
 
             if (role != null)
             {
-                IdentityResult result = await this.AppRoleManager.DeleteAsync(role);
+                IdentityResult result = await _roleService.DeleteAsync(role);
 
                 if (!result.Succeeded)
                 {
@@ -85,7 +95,7 @@ namespace AuthApi.Controllers
         [Route("ManageUsersInRole")]
         public async Task<IHttpActionResult> ManageUsersInRole(UsersInRoleModel model)
         {
-            var role = await this.AppRoleManager.FindByIdAsync(model.Id);
+            var role = await _roleService.FindByIdAsync(model.Id);
 
             if (role == null)
             {
@@ -95,7 +105,7 @@ namespace AuthApi.Controllers
 
             foreach (string user in model.EnrolledUsers)
             {
-                var appUser = await this.AppUserManager.FindByIdAsync(user);
+                var appUser = await _userService.GetById(user);
 
                 if (appUser == null)
                 {
@@ -103,9 +113,9 @@ namespace AuthApi.Controllers
                     continue;
                 }
 
-                if (!this.AppUserManager.IsInRole(user, role.Name))
+                if (!_userService.IsInRole(user, role.Name))
                 {
-                    IdentityResult result = await this.AppUserManager.AddToRoleAsync(user, role.Name);
+                    IdentityResult result = await _userService.AddToRoleAsync(user, role.Name);
 
                     if (!result.Succeeded)
                     {
@@ -117,7 +127,7 @@ namespace AuthApi.Controllers
 
             foreach (string user in model.RemovedUsers)
             {
-                var appUser = await this.AppUserManager.FindByIdAsync(user);
+                var appUser = await _userService.GetById(user);
 
                 if (appUser == null)
                 {
@@ -125,7 +135,7 @@ namespace AuthApi.Controllers
                     continue;
                 }
 
-                IdentityResult result = await this.AppUserManager.RemoveFromRoleAsync(user, role.Name);
+                IdentityResult result = await _userService.RemoveFromRoleAsync(user, role.Name);
 
                 if (!result.Succeeded)
                 {

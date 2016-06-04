@@ -74,5 +74,20 @@ namespace Services
         {
             return await _applicationUserManager.ConfirmEmailAsync(userId, code);
         }
+
+        public bool IsInRole(string userId, string roleName)
+        {
+            return _applicationUserManager.IsInRole(userId, roleName);
+        }
+
+        public async Task<IdentityResult> AddToRoleAsync(string userId, string roleName)
+        {
+            return await _applicationUserManager.AddToRoleAsync(userId, roleName);
+        }
+
+        public async Task<IdentityResult> RemoveFromRoleAsync(string userId, string roleName)
+        {
+            return await _applicationUserManager.RemoveFromRoleAsync(userId, roleName);
+        }
     }
 }

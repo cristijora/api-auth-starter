@@ -20,6 +20,7 @@ namespace DataAcces.Migrations
         protected override void Seed(DataAcces.Context.DataContext context)
         {
             var manager = new UserManager<User>(new UserStore<User>(new DataContext()));
+            var roleManager = new RoleManager<Role>(new RoleStore<Role>(new DataContext()));
 
             var user = new User
             {
@@ -31,7 +32,15 @@ namespace DataAcces.Migrations
                 JoinDate = DateTime.Now.AddYears(-3)
             };
 
-            manager.Create(user, "admintest");
+            manager.Create(user, "cristijora");
+            if (!roleManager.Roles.Any())
+            {
+                roleManager.Create(new Role { Name = "SuperAdmin" });
+                roleManager.Create(new Role { Name = "Admin" });
+                roleManager.Create(new Role { Name = "User" });
+            }
+            var adminUser = manager.FindByName("admin");
+            manager.AddToRoles(adminUser.Id, "SuperAdmin", "Admin");
         }
     }
 }
